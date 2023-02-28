@@ -15,10 +15,10 @@ const {
 // ROUTES
 const router = express.Router();
 
-router.param('id', checkId);
+// router.param('id', checkId);
 
 // Each router will be used as a middleware for routes
-router.route('/', router).get(getAllTours).post(checkBody, createTour);
+router.route('/', router).get(getAllTours).post(createTour);
 
 router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
