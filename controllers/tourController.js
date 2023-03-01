@@ -47,7 +47,7 @@ exports.createTour = async (req, res) => {
       data: newTour,
     });
   } catch (err) {
-    console.log('Error encountered creating a new tour: ' + err.message);
+    console.log(`Error encountered creating a new tour: ${  err.message}`);
   }
 };
 

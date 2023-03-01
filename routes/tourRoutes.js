@@ -7,9 +7,7 @@ const {
   createTour,
   getTour,
   deleteTour,
-  updateTour,
-  checkId,
-  checkBody,
+  updateTour
 } = require('./../controllers/tourController');
 
 // ROUTES
