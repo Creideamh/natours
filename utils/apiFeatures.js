@@ -18,6 +18,8 @@ class APIFeatures {
       console.log(JSON.parse(queryStr));
   
       this.query = this.query.find(JSON.parse(queryStr));
+
+      return this
     }
   
     // Sorting
@@ -30,7 +32,8 @@ class APIFeatures {
       }else{
         this.query = this.query.sort('-createdAt');
       }
-    return this;
+
+     return this;
     }
   
     limitFields(){
@@ -40,19 +43,20 @@ class APIFeatures {
       }else{
         this.query = this.query.select('-__v');
       }
+
+      return this;
     }
   
     // Pagination
-    pagination() {
+    paginate() {
           const page = this.queryString.page * 1 || 1;
           const limit = this.queryString.limit * 1 || 100;
           const skip = (page - 1) * limit;
       
       
-          this.query = this.query
-            .skip(skip)
-            .limit(limit);
-      
+          this.query = this.query.skip(skip).limit(limit);
+
+      return this;
     }
   
   }

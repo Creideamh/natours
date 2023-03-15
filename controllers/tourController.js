@@ -18,8 +18,8 @@ exports.getAllTours = async (req, res) => {
     const features = new APIFeatures(Tour.find(), req.query)
           .filter()
           .sort()
-          .limitField()
-          .pagination();
+          .limitFields()
+          .paginate();
 
     const tours = await features.query;
 
@@ -118,3 +118,75 @@ exports.deleteTour = async (req, res) => {
   }
 
 };
+
+exports.getTourStats = async (req, res) => {
+    try {
+      const stats = await Tour.aggregate([
+        {
+          $match: { ratingsAverage: { $gte: 4.5 } },
+        },
+        {
+          $group: {
+            _id: "$difficulty",
+            numTours: { $sum: 1},
+            numRatings: { $sum: '$ratingsQuantity'},
+            avgrating: { $avg:  '$aratingsAverage'},
+            minPrice: { $min: '$price'},
+            maxPrice: { $max: '$price'},
+          },
+        },
+        { $sort: { avgPrice: 1 }   },
+        { 
+          $match: { _id: { $ne: 'EASY'} }
+        }
+      ]);
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          stats
+        }
+      });
+
+    } catch (err) {
+      res.status(404).json({
+        status: 'fail',
+        message: err.message
+    });
+  };
+}
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+    const plan =  await Tour.aggregate([
+      { $unwind: '$startDates'},
+      {
+        $match: {
+          startDates: { 
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {$month: 'startDates'},
+          numTourStarts: { $sum: 1},
+          // tours: { $push: '$name'}
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan
+      }
+    })
+
+  } catch (error) {
+    
+  }
+
+}
